@@ -1,0 +1,22 @@
+<../../mkconfig
+
+DIRS=\
+	t\
+
+<$ROOT/mkfiles/mksubdirs
+test:V: test-$SHELLTYPE
+
+TARG=\
+	tap.dis\
+
+SYSMODULES=\
+	sys.m\
+	draw.m\
+	debug.m\
+
+MODULES=\
+	../../module/tap.m\
+
+DISBIN=../../dis/lib
+
+<$ROOT/mkfiles/mkdis

@@ -1,0 +1,11 @@
+syntax: glob
+
+# debug
+*.sbl
+
+
+syntax: regexp
+
+# build
+appl/.*\.dis
+

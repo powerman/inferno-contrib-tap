@@ -1,0 +1,17 @@
+<../../../mkconfig
+
+TARG=\
+
+TESTS=\
+	smoke.dis\
+
+SYSMODULES=\
+	sys.m\
+	draw.m\
+
+MODULES=\
+	../../../module/t.m\
+	../../../module/tap.m\
+
+<mktest
+LIMBOFLAGS=$LIMBOFLAGS -I../../../../../../

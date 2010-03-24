@@ -4,6 +4,7 @@ TARG=\
 
 TESTS=\
 	smoke.dis\
+	smoke2.dis\
 
 SYSMODULES=\
 	sys.m\
@@ -13,5 +14,5 @@ MODULES=\
 	../../../module/t.m\
 	../../../module/tap.m\
 
-<mktest
+<../../../mktest
 LIMBOFLAGS=$LIMBOFLAGS -I../../../../../../

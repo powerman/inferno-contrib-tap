@@ -11,7 +11,7 @@ clean:V:
 
 nuke:V:		clean
 
-test:V:		$TESTS.test-$OSTARG
+test:V:		${TESTS:%=%.test-$OSTARG}
 
 %.dis.test-Inferno:V:	all
 	$stem.dis

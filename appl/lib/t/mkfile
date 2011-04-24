@@ -1,10 +1,10 @@
+OPT_ROOT=$INFERNO_HOME
 <../../../mkconfig
 
 TARG=\
 
 TESTS=\
 	smoke.dis\
-	smoke2.dis\
 
 SYSMODULES=\
 	sys.m\
@@ -15,4 +15,4 @@ MODULES=\
 	../../../module/tap.m\
 
 <../../../mktest
-LIMBOFLAGS=$LIMBOFLAGS -I../../../../../../
+LIMBOFLAGS=$LIMBOFLAGS -I$OPT_ROOT

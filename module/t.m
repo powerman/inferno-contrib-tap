@@ -9,6 +9,7 @@ include "opt/powerman/tap/module/tap.m";
 	diag: import tap;
 	skip,todo: import tap;
 	ok,eq_int,ne_int,eq,ne,eq_list,eq_arr: import tap;
+	getmem,ok_mem: import tap;
 
 T: module
 {

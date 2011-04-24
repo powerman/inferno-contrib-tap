@@ -2,6 +2,8 @@ TAP: module
 {
 	PATH: con "/opt/powerman/tap/dis/lib/tap.dis";
 
+	UsedMem: type (int, int, int);
+
 	init: fn();
 
 	plan: fn(tests: int); # use either plan() or done()
@@ -21,4 +23,6 @@ TAP: module
 	ne:	fn(a,b: string, msg: string);
 	eq_list:fn[T](cmp: ref fn(a,b: T): int, a,b: list  of T, msg: string); # will sort a&b
 	eq_arr: fn[T](cmp: ref fn(a,b: T): int, a,b: array of T, msg: string); # will sort a&b
+	getmem: fn(): UsedMem;
+	ok_mem: fn(was: UsedMem);
 };

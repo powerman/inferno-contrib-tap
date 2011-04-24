@@ -4,6 +4,9 @@ include "sys.m";
 	sys: Sys;
 	sprint: import sys;
 include "draw.m";
+include "bufio.m";
+	bufio: Bufio;
+	Iobuf: import bufio;
 include "debug.m";
         debug: Debug;
         Prog, Module, Exp: import debug;
@@ -18,6 +21,7 @@ init()
         debug = load Debug Debug->PATH;
 	if(debug != nil)
 		debug->init();
+	bufio = load Bufio Bufio->PATH;
 }
 
 plan(tests: int)
@@ -138,6 +142,27 @@ eq_arr[T](cmp: ref fn(a,b: T): int, a,b: array of T, msg: string)
 		if(cmp(a[i], b[i]) != 0)
 			return out_not_ok(msg);
 	return out_ok(msg);
+}
+
+getmem(): UsedMem
+{
+	mem := bufio->open("/dev/memory", bufio->OREAD);
+	main := int mem.gets('\n');
+	heap := int mem.gets('\n');
+	img  := int mem.gets('\n');
+	return (main, heap, img);
+}
+
+ok_mem(was: UsedMem)
+{
+	now := getmem();
+	ok(now.t0 == was.t0 && now.t1 == was.t1 && now.t2 == was.t2, "memory not leaking");
+	if(now.t0 != was.t0)
+		diag(sprint("main leaking: %d -> %d", was.t0, now.t0));
+	if(now.t1 != was.t1)
+		diag(sprint("heap leaking: %d -> %d", was.t1, now.t1));
+	if(now.t2 != was.t2)
+		diag(sprint("image leaking: %d -> %d", was.t2, now.t2));
 }
 
 ### Internal helpers

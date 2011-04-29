@@ -4,6 +4,8 @@ include "sys.m";
 	sys: Sys;
 	sprint: import sys;
 include "draw.m";
+include "string.m";
+	str: String;
 include "bufio.m";
 	bufio: Bufio;
 	Iobuf: import bufio;
@@ -14,14 +16,22 @@ include "../../module/tap.m";
 
 have_plan, tests_run: int;
 dir, reason: string;
+ex: string;
+stopwatch: int;
 
 init()
 {
 	sys = load Sys Sys->PATH;
+	str = load String String->PATH;
+	if(str == nil)
+		bail_out(sprint("load String %s: %r", String->PATH));
         debug = load Debug Debug->PATH;
-	if(debug != nil)
-		debug->init();
+	if(debug == nil)
+		bail_out(sprint("load Debug %s: %r", Debug->PATH));
+	debug->init();
 	bufio = load Bufio Bufio->PATH;
+	if(bufio == nil)
+		bail_out(sprint("load Bufio %s: %r", Bufio->PATH));
 }
 
 plan(tests: int)
@@ -81,6 +91,8 @@ ok(bool:int, msg: string)
 
 eq_int(a,b: int, msg: string)
 {
+	if(msg == nil)
+		msg = "eq_int: " + string b;
 	if(a == b)
 		return out_ok(msg);
 	out_not_ok(msg);
@@ -90,6 +102,8 @@ eq_int(a,b: int, msg: string)
 
 ne_int(a,b: int, msg: string)
 {
+	if(msg == nil)
+		msg = "ne_int: " + string b;
 	if(a != b)
 		return out_ok(msg);
 	out_not_ok(msg);
@@ -100,6 +114,8 @@ ne_int(a,b: int, msg: string)
 
 eq(a,b: string, msg: string)
 {
+	if(msg == nil)
+		msg = "eq: " + quotemsg(b);
 	if(a == b)
 		return out_ok(msg);
 	out_not_ok(msg);
@@ -109,6 +125,8 @@ eq(a,b: string, msg: string)
 
 ne(a,b: string, msg: string)
 {
+	if(msg == nil)
+		msg = "ne: " + quotemsg(b);
 	if(a != b)
 		return out_ok(msg);
 	out_not_ok(msg);
@@ -144,6 +162,54 @@ eq_arr[T](cmp: ref fn(a,b: T): int, a,b: array of T, msg: string)
 	return out_ok(msg);
 }
 
+catched(e: string)
+{
+	ex = e;
+}
+
+raised(e: string, msg: string)
+{
+	if(msg == nil)
+		msg = "raised: " + quotemsg(e);
+	if(len e > 0 && e[len e - 1] == '*')
+		if(str->prefix(e[:len e - 1], ex))
+			ok(1, msg);
+		else
+			eq(ex, e, msg);
+	else
+		eq(ex, e, msg);
+	ex = nil;
+}
+
+stopwatch_start()
+{
+	stopwatch = sys->millisec();
+}
+
+stopwatch_min(min: int, msg: string)
+{
+	if(msg == nil)
+		msg = "stopwatch >= " + string min;
+	n := sys->millisec() - stopwatch;
+	if(n >= min)
+		return out_ok(msg);
+	out_not_ok(msg);
+	out_failed(sprint("       got: %d", n));
+	out_failed(sprint("  expected: >= %d", min));
+}
+
+stopwatch_max(max: int, msg: string)
+{
+	if(msg == nil)
+		msg = "stopwatch <= " + string max;
+	n := sys->millisec() - stopwatch;
+	if(n <= max)
+		return out_ok(msg);
+	out_not_ok(msg);
+	out_failed(sprint("       got: %d", n));
+	out_failed(sprint("  expected: <= %d", max));
+}
+
 getmem(): UsedMem
 {
 	mem := bufio->open("/dev/memory", bufio->OREAD);
@@ -166,6 +232,17 @@ ok_mem(was: UsedMem)
 }
 
 ### Internal helpers
+
+quotemsg(msg: string): string
+{
+	s := "";
+	for(i := 0; i < len msg; i++) case msg[i] {
+	'\n' => s[len s] = '\\';
+		s[len s] = 'n';
+	* =>	s[len s] = msg[i];
+	}
+	return str->quoted(s :: nil);
+}
 
 l2a[T](l: list of T): array of T # from mjl's util0
 {
@@ -257,14 +334,14 @@ getcaller(pid: int, c: chan of string)
 		c <-= sprint("debug: stack() failed: %s", err);
 		exit;
 	}
-	for(i := 0; i < len stk; i++){
+STACK:	for(i := 0; i < len stk; i++){
 		stk[i].m.stdsym();
 		s := stk[i].srcstr();
-		me := "tap.b:";
-		if(s[0:len me] != me){
-			c <-= s;
-			exit;
-		}
+		for(l := sys->tokenize(s, "/ ").t1; l != nil; l = tl l)
+			if(hd l == "tap.dis")
+				continue STACK;
+		c <-= s;
+		exit;
 	}
 	c <-= "debug: unknown";
 }

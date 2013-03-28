@@ -254,7 +254,8 @@ provided by Perl module Test::Harness.
 .PP
 Failed test apps exits with empty $status.
 .PP
+In host os 
 .B mk test
 .br
-won't stop executing test suite after 
+won't stop test suite after 
 .BR bail_out .

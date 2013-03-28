@@ -24,7 +24,7 @@ init(nil: ref Draw->Context, nil: list of string)
 	tap = load TAP TAP->PATH;
 	if(tap == nil){
 		sys->print("Bail out! load %s: %r\n", TAP->PATH);
-		raise "fail:load TAP";
+		raise "fail:Bail out! load TAP";
 	}
 	tap->init();
 	test();

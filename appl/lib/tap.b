@@ -55,7 +55,7 @@ skip_all(reason: string)
 bail_out(reason: string)
 {
 	out_bailout(reason);
-	exit;
+	raise sprint("fail:Bail out! %s", reason);
 }
 
 skip(howmany: int, msg: string)

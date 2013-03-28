@@ -181,5 +181,5 @@ Host OS command prove(1) provided by Perl module Test::Harness.
 
 Failed test apps exits with empty $status.
 
-`mk test` won't stop executing test suite after *bail_out*.
+In host os `mk test` won't stop test suite after *bail_out*.
 

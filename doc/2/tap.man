@@ -47,18 +47,16 @@ ok_mem:         fn(was: UsedMem);
 .EE
 .SH DESCRIPTION
 .PP
-.B 
-.B http://testanything.org/
+Test Anything Protocol ( 
+.BR http://testanything.org/ )
 module (TAP producer)
 provides ability to implement tests.
 .PP
 Using mkfiles and helper script 
 .B runtest.sh
-.br
-provided by
-.B 
-.B http://code.google.com/p/inferno-opt-mkfiles/source/browse/
-project
+provided by opt-mkfiles project
+( 
+.BR http://code.google.com/p/inferno-opt-mkfiles )
 you can run 
 .B mk test
 both in host OS and Inferno.
@@ -66,8 +64,8 @@ While there no available TAP consumer for Inferno yet, if you run tests in host
 OS you can use existing consumer like 
 .B prove
 command from perl module
-.B 
-.BR http://search.cpan.org/~andya/Test-Harness/ .
+Test::Harness ( 
+.BR http://search.cpan.org/~andya/Test-Harness/ ).
 .SS Loading
 .PP
 This module can be loaded in two ways - traditional (include tap.m; load;
@@ -84,12 +82,9 @@ if you include tap.m and load
 module manually.
 .SS Using
 .PP
-Terminology: "test app" is single 
-.B t/*.b
-.br
-file which usually contain many
-"tests" (calls to functions like 
-.B ok
+Terminology: "test app" is single t/
+.B .b file which usually contain many
+"tests" (calls to functions like *ok
 or 
 .BR eq_int )
 ; "test suite" consists of
@@ -160,7 +155,8 @@ after these tests.
 .B diag
 can be used to output anything (usually debug info) without breaking TAP
 (use it in your tests instead of 
-.BR sys->print ).
+.IB sys ->print()
+).
 .PP
 .BR ok ,
 .BR eq ,
@@ -256,6 +252,5 @@ Failed test apps exits with empty $status.
 .PP
 In host os 
 .B mk test
-.br
 won't stop test suite after 
 .BR bail_out .

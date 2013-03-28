@@ -58,15 +58,15 @@ ok_mem: 	fn(was: UsedMem);
 
 == DESCRIPTION
 
-http://testanything.org/[Test Anything Protocol] module (TAP producer)
+Test Anything Protocol ( http://testanything.org/ ) module (TAP producer)
 provides ability to implement tests.
 
-Using mkfiles and helper script `runtest.sh` provided by
-http://code.google.com/p/inferno-opt-mkfiles/source/browse/[opt-mkfiles] project
+Using mkfiles and helper script *runtest.sh* provided by opt-mkfiles project
+( http://code.google.com/p/inferno-opt-mkfiles )
 you can run *mk test* both in host OS and Inferno.
 While there no available TAP consumer for Inferno yet, if you run tests in host
 OS you can use existing consumer like *prove* command from perl module
-http://search.cpan.org/~andya/Test-Harness/[Test::Harness].
+Test::Harness ( http://search.cpan.org/~andya/Test-Harness/ ).
 
 === Loading
 
@@ -79,7 +79,7 @@ module manually.
 
 === Using
 
-Terminology: "test app" is single `t/*.b` file which usually contain many
+Terminology: "test app" is single t/*.b file which usually contain many
 "tests" (calls to functions like *ok* or *eq_int*); "test suite" consists of
 all test apps. *mk test* and (in host os) *prove -r* will run full test suite -
 all test apps, one by one. To run single test app use *t/someapp* and (in host
@@ -120,7 +120,7 @@ status of test app (so it's still can be "All tests successful."). To switch off
 this mode, call *todo(nil)* after these tests.
 
 *diag* can be used to output anything (usually debug info) without breaking TAP
-(use it in your tests instead of *sys->print*).
+(use it in your tests instead of *sys->print()*).
 
 *ok*, *eq*, *ne*, *eq_int*, *ne_int*, *eq_real*, *ne_real*, *eq_list*, *eq_arr*
 are basic tests. *eq_list* and *eq_arr* will sort both lists/arrays before comparison.
@@ -181,5 +181,5 @@ Host OS command prove(1) provided by Perl module Test::Harness.
 
 Failed test apps exits with empty $status.
 
-In host os `mk test` won't stop test suite after *bail_out*.
+In host os *mk test* won't stop test suite after *bail_out*.
 

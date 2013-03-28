@@ -191,6 +191,7 @@ stopwatch_min(min: int, msg: string)
 	if(msg == nil)
 		msg = "stopwatch >= " + string min;
 	n := sys->millisec() - stopwatch;
+	stopwatch_start();
 	if(n >= min)
 		return out_ok(msg);
 	out_not_ok(msg);
@@ -203,6 +204,7 @@ stopwatch_max(max: int, msg: string)
 	if(msg == nil)
 		msg = "stopwatch <= " + string max;
 	n := sys->millisec() - stopwatch;
+	stopwatch_start();
 	if(n <= max)
 		return out_ok(msg);
 	out_not_ok(msg);

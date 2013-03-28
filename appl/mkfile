@@ -1,7 +1,8 @@
-<../mkconfig
+PKGDIR=..
+<$PKGDIR/mkconfig
+
 
 DIRS=\
 	lib\
 
-<$ROOT/mkfiles/mksubdirs
-test:V: test-$SHELLTYPE
+<$MKFILES/mksubdirs

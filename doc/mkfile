@@ -1,10 +1,8 @@
-PKGDIR=.
+PKGDIR=..
 <$PKGDIR/mkconfig
 
 
 DIRS=\
-	appl\
-	doc\
-	man\
+	2\
 
 <$MKFILES/mksubdirs

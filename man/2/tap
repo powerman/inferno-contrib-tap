@@ -1,0 +1,260 @@
+.TH TAP 2
+.SH NAME
+tap: plan, skip_all, bail_out, done, diag, skip, todo, ok, eq, ne, eq_int, ne_int, eq_real, ne_real, eq_list, eq_arr, catched, raised, stopwatch_start, stopwatch_min, stopwatch_max, getmem, ok_mem \- test library compatible with Test Anything Protocol
+.SH SYNOPSIS
+.EX
+implement T;
+
+include "opt/powerman/tap/module/tap.m";
+        tap: TAP;
+tap = load TAP TAP->PATH;
+tap->init();
+# -- OR --
+include "opt/powerman/tap/module/t.m";
+test(){
+    # your tests here
+}
+
+init: fn();
+
+plan:           fn(tests: int);
+done:           fn();
+skip_all:       fn(reason: string);
+bail_out:       fn(reason: string);
+
+skip:           fn(howmany: int, reason: string);
+todo:           fn(reason: string);
+
+diag:           fn(msg: string);
+
+ok:             fn(bool:int,    msg: string);
+eq:             fn(a,b: string, msg: string);
+ne:             fn(a,b: string, msg: string);
+eq_int:         fn(a,b: int,    msg: string);
+ne_int:         fn(a,b: int,    msg: string);
+eq_real:        fn(a,b: real,   msg: string);
+ne_real:        fn(a,b: real,   msg: string);
+eq_list:        fn[T](cmp: ref fn(a,b: T): int, a,b: list  of T, msg: string);
+eq_arr:         fn[T](cmp: ref fn(a,b: T): int, a,b: array of T, msg: string);
+catched:        fn(e: string);
+raised:         fn(e: string,   msg: string);
+stopwatch_start:fn();
+stopwatch_min:  fn(min: int, msg: string);
+stopwatch_max:  fn(max: int, msg: string);
+getmem:         fn(): UsedMem;
+ok_mem:         fn(was: UsedMem);
+
+.EE
+.SH DESCRIPTION
+.PP
+.B 
+.B http://testanything.org/
+module (TAP producer)
+provides ability to implement tests.
+.PP
+Using mkfiles and helper script 
+.B runtest.sh
+.br
+provided by
+.B 
+.B http://code.google.com/p/inferno-opt-mkfiles/source/browse/
+project
+you can run 
+.B mk test
+both in host OS and Inferno.
+While there no available TAP consumer for Inferno yet, if you run tests in host
+OS you can use existing consumer like 
+.B prove
+command from perl module
+.B 
+.BR http://search.cpan.org/~andya/Test-Harness/ .
+.SS Loading
+.PP
+This module can be loaded in two ways - traditional (include tap.m; load;
+tap->init()) or simplified (include t.m; place your code inside function named
+.B test()
+instead of 
+.BI init( ref Draw->Context ,  list of string )
+).
+.PP
+.B init
+must be called before using module 
+.I only
+if you include tap.m and load
+module manually.
+.SS Using
+.PP
+Terminology: "test app" is single 
+.B t/*.b
+.br
+file which usually contain many
+"tests" (calls to functions like 
+.B ok
+or 
+.BR eq_int )
+; "test suite" consists of
+all test apps. 
+.B mk test
+and (in host os) 
+.B prove -r
+will run full test suite -
+all test apps, one by one. To run single test app use 
+.B t/someapp
+and (in host
+os) 
+.B ./t/someapp.t
+or 
+.B prove t/someapp.t
+.
+.PP
+Each test app must define how many tests it's going to do - this is needed to
+detect exit/crash in the middle of app when not all tests was executed yet.
+Use either 
+.B plan
+before all tests if you know how many tests you'll do, or
+.B done
+after all tests. It's safe to call 
+.B done
+even if you already called 
+.B plan
+(in this case 
+.B done
+will be ignored).
+.PP
+There are several ways of flow control for your tests: refuse to run tests
+(usually because of unsatisfied dependencies/requirements), skipping all/some
+tests, marking some tests as "TODO" (not working yet).
+.PP
+.B skip_all
+should be used before 
+.B plan
+or running any tests, and result in
+exit from test app with "All tests successful." status.
+.PP
+.B bail_out
+should be used if some critical error happens and there is no sense
+in executing any tests. It will not only stop current test app, but also
+prevent execution of next test apps in test suite.
+.PP
+.B skip
+let you skip (with success status) few tests. This function will raise
+"SKIP", so here is example how to use it:
+.EX
+ok(1, "first test");
+{ skip(2, "skip next two tests");
+ok(1, "second test");
+ok(1, "third test");
+} exception { "SKIP" => ; * => raise ; }
+ok(1, "fourth test");
+
+.EE
+.PP
+.B todo
+let you mark next tests as "expected to fail" and provide a reason. As
+result these tests will be executed, but their failures won't affect final
+status of test app (so it's still can be "All tests successful."). To switch off
+this mode, call 
+.BI todo( "" nil "" )
+after these tests.
+.PP
+.B diag
+can be used to output anything (usually debug info) without breaking TAP
+(use it in your tests instead of 
+.BR sys->print ).
+.PP
+.BR ok ,
+.BR eq ,
+.BR ne ,
+.BR eq_int ,
+.BR ne_int ,
+.BR eq_real ,
+.BR ne_real ,
+.BR eq_list ,
+.B eq_arr
+are basic tests. 
+.B eq_list
+and 
+.B eq_arr
+will sort both lists/arrays before comparison.
+.PP
+.BR catched ,
+.B raised
+let you test for exceptions raised (or not) in tested code:
+.EX
+{ code1_which_may_raise(); } exception e { "*"=>catched(e); }
+raised("myerr:*", "should raise string with 'myerr:' prefix");
+{ code2_which_may_raise(); } exception e { "*"=>catched(e); }
+raised(nil, "shouldn't raise");
+
+.EE
+.PP
+.BR stopwatch_start ,
+.BR stopwatch_min ,
+.B stopwatch_max
+let you test how much time
+it took to execute some code. 
+.B stopwatch_start
+should be called before running
+that code, and one of 
+.B stopwatch_min
+(test code took no less than 
+.I n
+millisec) or 
+.B stopwatch_max
+(test code took no greater than 
+.I n
+millisec)
+should be called after that code. 
+.B stopwatch_min
+and 
+.B stopwatch_max
+will
+call 
+.BR stopwatch_start ,
+so there is no needs in calling it manually if you'll
+run next chunk of code to test right after them.
+.PP
+.BR getmem ,
+.B ok_mem
+let you test for memory leaks: save value returned by
+.B getmem
+into variable, run code to test, call 
+.B ok_mem
+with that variable
+and it will check amount of used main/heap/image memory not change.
+.SH EXAMPLE
+.EX
+implement T;
+
+include "opt/powerman/tap/module/t.m";
+
+test()
+{
+    plan(3);
+
+    ok(1==1,            "true test");
+    eq("abc", "def",    "abc == def?");
+    eq_int(2, 3,        "2 == 3?");
+}
+
+.EE
+.SH SOURCE
+.PP
+.B /opt/powerman/tap/appl/lib/tap.b
+.br
+.SH SEE ALSO
+.PP
+.IR itest (1),
+.IR itslib (2)
+.PP
+Host OS command 
+.IR prove (1)
+provided by Perl module Test::Harness.
+.SH BUGS
+.PP
+Failed test apps exits with empty $status.
+.PP
+.B mk test
+.br
+won't stop executing test suite after 
+.BR bail_out .

@@ -40,6 +40,12 @@ plan(tests: int)
 	out_plan(tests);
 }
 
+done()
+{
+	if(!have_plan)
+		out_plan(tests_run);
+}
+
 skip_all(reason: string)
 {
 	out_skipall(reason);
@@ -50,17 +56,6 @@ bail_out(reason: string)
 {
 	out_bailout(reason);
 	exit;
-}
-
-done()
-{
-	if(!have_plan)
-		out_plan(tests_run);
-}
-
-diag(msg: string)
-{
-	out_diag(msg);
 }
 
 skip(howmany: int, msg: string)
@@ -82,11 +77,39 @@ todo(msg: string)
 		(dir, reason) = ("TODO", msg);
 }
 
+diag(msg: string)
+{
+	out_diag(msg);
+}
+
 ok(bool:int, msg: string)
 {
 	if(bool)
 		return out_ok(msg);
 	return out_not_ok(msg);
+}
+
+eq(a,b: string, msg: string)
+{
+	if(msg == nil)
+		msg = "eq: " + quotemsg(b);
+	if(a == b)
+		return out_ok(msg);
+	out_not_ok(msg);
+	out_failed(sprint("       got: %#q", a));
+	out_failed(sprint("  expected: %#q", b));
+}
+
+ne(a,b: string, msg: string)
+{
+	if(msg == nil)
+		msg = "ne: " + quotemsg(b);
+	if(a != b)
+		return out_ok(msg);
+	out_not_ok(msg);
+	out_failed(sprint("  %#q", a));
+	out_failed("      ne");
+	out_failed(sprint("  %#q", b));
 }
 
 eq_int(a,b: int, msg: string)
@@ -112,27 +135,27 @@ ne_int(a,b: int, msg: string)
 	out_failed(sprint("  %d", b));
 }
 
-eq(a,b: string, msg: string)
+eq_real(a,b: real, msg: string)
 {
 	if(msg == nil)
-		msg = "eq: " + quotemsg(b);
+		msg = "eq_real: " + string b;
 	if(a == b)
 		return out_ok(msg);
 	out_not_ok(msg);
-	out_failed(sprint("       got: %#q", a));
-	out_failed(sprint("  expected: %#q", b));
+	out_failed(sprint("       got: %f", a));
+	out_failed(sprint("  expected: %f", b));
 }
 
-ne(a,b: string, msg: string)
+ne_real(a,b: real, msg: string)
 {
 	if(msg == nil)
-		msg = "ne: " + quotemsg(b);
+		msg = "ne_real: " + string b;
 	if(a != b)
 		return out_ok(msg);
 	out_not_ok(msg);
-	out_failed(sprint("  %#q", a));
+	out_failed(sprint("  %f", a));
 	out_failed("      ne");
-	out_failed(sprint("  %#q", b));
+	out_failed(sprint("  %f", b));
 }
 
 eq_list[T](cmp: ref fn(a,b: T): int, a,b: list of T, msg: string)

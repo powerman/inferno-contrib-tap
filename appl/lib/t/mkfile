@@ -1,17 +1,20 @@
-<../../../mkconfig
+PKGDIR=../../..
+<$PKGDIR/mkconfig
 
-TARG=\
 
 TESTS=\
 	smoke.dis\
+
+TESTTARG=\
 
 SYSMODULES=\
 	sys.m\
 	draw.m\
 
-MODULES=\
-	../../../module/t.m\
-	../../../module/tap.m\
+OPTMODULES=\
 
-<../../../mktest
-LIMBOFLAGS=$LIMBOFLAGS -I$INFERNO_HOME
+MODULES=\
+	$PKGDIR/module/tap.m\
+	$PKGDIR/module/t.m\
+
+<$MKFILES/mktest

@@ -1,10 +1,14 @@
-<../../mkconfig
+PKGDIR=../..
+<$PKGDIR/mkconfig
+
 
 DIRS=\
 	t\
 
-<$ROOT/mkfiles/mksubdirs
-test:V: test-$SHELLTYPE
+<$MKFILES/mksubdirs
+
+
+DISBIN=$PKGDIR/dis/lib
 
 TARG=\
 	tap.dis\
@@ -14,9 +18,9 @@ SYSMODULES=\
 	draw.m\
 	debug.m\
 
+OPTMODULES=\
+
 MODULES=\
-	../../module/tap.m\
+	$PKGDIR/module/tap.m\
 
-DISBIN=../../dis/lib
-
-<$ROOT/mkfiles/mkdis
+<$MKFILES/mkdis

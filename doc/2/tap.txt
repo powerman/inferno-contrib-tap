@@ -62,11 +62,11 @@ Test Anything Protocol ( http://testanything.org/ ) module (TAP producer)
 provides ability to implement tests.
 
 Using mkfiles and helper script *runtest.sh* provided by opt-mkfiles project
-( http://code.google.com/p/inferno-opt-mkfiles )
+( https://github.com/powerman/inferno-opt-mkfiles )
 you can run *mk test* both in host OS and Inferno.
 While there no available TAP consumer for Inferno yet, if you run tests in host
 OS you can use existing consumer like *prove* command from perl module
-Test::Harness ( http://search.cpan.org/~andya/Test-Harness/ ).
+Test::Harness ( https://metacpan.org/pod/distribution/Test-Harness/bin/prove ).
 
 === Loading
 
